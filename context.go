@@ -17,7 +17,6 @@ package web
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"io"
 	"net/http"
 )
