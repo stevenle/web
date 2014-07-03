@@ -72,7 +72,18 @@ func WriteResponseJson(ctx *Context, content interface{}) error {
 	return encoder.Encode(content)
 }
 
+// Redirect replies to the request with a redirect to a URL.
+func Redirect(ctx *Context, urlStr string, code int) {
+	http.Redirect(ctx.response, ctx.Request, urlStr, code)
+	ctx.statusCode = code
+}
+
 func renderResponse(ctx *Context) {
+	// If a redirect was issued, assume that the response is already written.
+	if (ctx.statusCode == 301 || ctx.statusCode == 302) {
+		return;
+	}
+
 	ctx.response.WriteHeader(ctx.statusCode)
 	io.Copy(ctx.response, ctx.body)
 }
