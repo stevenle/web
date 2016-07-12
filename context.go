@@ -43,6 +43,17 @@ func newContext(request *http.Request, response http.ResponseWriter, params map[
 	}
 }
 
+// GetHeader returns the value of an HTTP request header.
+func GetHeader(ctx *Context, key string) string {
+	return ctx.Request.Header.Get(key)
+}
+
+// GetRequestJson decodes JSON from the request body.
+func GetRequestJson(ctx *Context, v interface{}) error {
+	decoder := json.NewDecoder(ctx.Request.Body)
+	return decoder.Decode(v)
+}
+
 // SetHeader sets the value of an HTTP response header.
 func SetHeader(ctx *Context, key string, value string) {
 	// TODO(stevenle): Disallow certain protected headers from being written.
@@ -80,8 +91,8 @@ func Redirect(ctx *Context, urlStr string, code int) {
 
 func renderResponse(ctx *Context) {
 	// If a redirect was issued, assume that the response is already written.
-	if (ctx.statusCode == 301 || ctx.statusCode == 302) {
-		return;
+	if ctx.statusCode == 301 || ctx.statusCode == 302 {
+		return
 	}
 
 	ctx.response.WriteHeader(ctx.statusCode)
